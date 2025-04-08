@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Real-Time Uploads</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    img { max-width: 100px; display: block; }
+  </style>
+</head>
+<body>
+  <h1>Upload Image + Text</h1>
+  <form id="uploadForm">
+    <input type="text" id="title" placeholder="Enter title" required><br><br>
+    <input type="file" id="imageFile" required><br><br>
+    <button type="submit">Upload</button>
+  </form>
+
+  <h2>Live Posts</h2>
+  <div id="posts"></div>
+
+  <script>
+    const supabase = supabase.createClient('https://gmbcsysnhrcnmubvbzgw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtYmNzeXNuaHJjbm11YnZiemd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxMjU5MTksImV4cCI6MjA1OTcwMTkxOX0.didadgJPtCgHLo0kzorpAX6bZztVEOcQ0c1_VvhYR5E');
+
+    async function fetchPosts() {
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      const postsDiv = document.getElementById('posts');
+      postsDiv.innerHTML = '';
+      data.forEach(post => {
+        const div = document.createElement('div');
+        div.innerHTML = `<p>${post.title}</p><img src="${post.image_url}" />`;
+        postsDiv.appendChild(div);
+      });
+    }
+
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const fileInput = document.getElementById('imageFile');
+      const file = fileInput.files[0];
+      const title = document.getElementById('title').value;
+
+      const filePath = `${Date.now()}_${file.name}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage.from('uploads').upload(filePath, file);
+      if (uploadError) return alert('Upload failed');
+
+      const imageUrl = supabase.storage.from('uploads').getPublicUrl(filePath).data.publicUrl;
+
+      await supabase.from('posts').insert([{ title, image_url: imageUrl }]);
+      fileInput.value = '';
+      document.getElementById('title').value = '';
+    });
+
+    // Real-time updates
+    supabase
+      .channel('public:posts')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, fetchPosts)
+      .subscribe();
+
+    fetchPosts();
+  </script>
+</body>
+</html>
