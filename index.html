@@ -5,14 +5,15 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
     body { font-family: sans-serif; padding: 20px; }
-    img { max-width: 100px; display: block; }
+    img { max-width: 200px; display: block; margin-top: 10px; }
+    .card { border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 8px; }
   </style>
 </head>
 <body>
   <h1>Upload Image + Text</h1>
   <form id="uploadForm">
     <input type="text" id="title" placeholder="Enter title" required><br><br>
-    <input type="file" id="imageFile" required><br><br>
+    <input type="file" id="imageFile" accept="image/*" required><br><br>
     <button type="submit">Upload</button>
   </form>
 
@@ -20,7 +21,10 @@
   <div id="posts"></div>
 
   <script>
-    const supabase = supabase.createClient('https://gmbcsysnhrcnmubvbzgw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtYmNzeXNuaHJjbm11YnZiemd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxMjU5MTksImV4cCI6MjA1OTcwMTkxOX0.didadgJPtCgHLo0kzorpAX6bZztVEOcQ0c1_VvhYR5E');
+    const supabase = supabase.createClient(
+      'https://gmbcsysnhrcnmubvbzgw.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtYmNzeXNuaHJjbm11YnZiemd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxMjU5MTksImV4cCI6MjA1OTcwMTkxOX0.didadgJPtCgHLo0kzorpAX6bZztVEOcQ0c1_VvhYR5E'
+    );
 
     async function fetchPosts() {
       const { data, error } = await supabase
@@ -32,7 +36,8 @@
       postsDiv.innerHTML = '';
       data.forEach(post => {
         const div = document.createElement('div');
-        div.innerHTML = `<p>${post.title}</p><img src="${post.image_url}" />`;
+        div.className = 'card';
+        div.innerHTML = `<strong>${post.title}</strong><br><img src="${post.image_url}" />`;
         postsDiv.appendChild(div);
       });
     }
@@ -45,17 +50,33 @@
       const title = document.getElementById('title').value;
 
       const filePath = `${Date.now()}_${file.name}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage.from('uploads').upload(filePath, file);
-      if (uploadError) return alert('Upload failed');
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('uploads')
+        .upload(filePath, file);
 
-      const imageUrl = supabase.storage.from('uploads').getPublicUrl(filePath).data.publicUrl;
+      if (uploadError) {
+        alert('Upload failed: ' + uploadError.message);
+        return;
+      }
 
-      await supabase.from('posts').insert([{ title, image_url: imageUrl }]);
-      fileInput.value = '';
-      document.getElementById('title').value = '';
+      const { data: urlData } = supabase.storage
+        .from('uploads')
+        .getPublicUrl(filePath);
+      const imageUrl = urlData.publicUrl;
+
+      const { error: insertError } = await supabase.from('posts').insert([
+        { title, image_url: imageUrl }
+      ]);
+
+      if (insertError) {
+        alert('Insert failed: ' + insertError.message);
+      } else {
+        fileInput.value = '';
+        document.getElementById('title').value = '';
+      }
     });
 
-    // Real-time updates
+    // Real-time listener
     supabase
       .channel('public:posts')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, fetchPosts)
