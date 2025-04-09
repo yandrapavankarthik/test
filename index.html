@@ -73,9 +73,13 @@
         const imageUrl = urlData.publicUrl;
 
         // Insert into posts table
-        const { error: insertError } = await supabase
-          .from('posts')
-          .insert([{ title, image_url: imageUrl }]);
+       const { error: insertError } = await supabase
+  .from('posts')
+  .insert([{
+    title,
+    image_url: imageUrl,
+    created_at: new Date().toISOString()  // ✅ add this line
+  }]);
 
         if (insertError) throw insertError;
 
