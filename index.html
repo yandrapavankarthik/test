@@ -21,80 +21,95 @@
   <h2>Live Posts</h2>
   <div id="posts"></div>
 
-  <script>
-    const supabaseUrl = 'https://gmbcsysnhrcnmubvbzgw.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtYmNzeXNuaHJjbm11YnZiemd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxMjU5MTksImV4cCI6MjA1OTcwMTkxOX0.didadgJPtCgHLo0kzorpAX6bZztVEOcQ0c1_VvhYR5E';
+<script>
+  const supabaseUrl = 'https://gmbcsysnhrcnmubvbzgw.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtYmNzeXNuaHJjbm11YnZiemd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxMjU5MTksImV4cCI6MjA1OTcwMTkxOX0.didadgJPtCgHLo0kzorpAX6bZztVEOcQ0c1_VvhYR5E';
 
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function fetchPosts() {
-      const { data, error } = await supabase
-        .from('posts')
-        .select('*')
-        .order('created_at', { ascending: false });
+  async function fetchPosts() {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-      const postsDiv = document.getElementById('posts');
-      postsDiv.innerHTML = '';
-      if (error) {
-        console.error('Error fetching posts:', error);
-        return;
-      }
+    const postsDiv = document.getElementById('posts');
+    postsDiv.innerHTML = '';
 
-      data.forEach(post => {
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.innerHTML = `
-          <strong>${post.title}</strong><br>
-          <img src="${post.image_url}" alt="${post.title}" />
-        `;
-        postsDiv.appendChild(div);
-      });
+    if (error) {
+      console.error('Error fetching posts:', error);
+      return;
     }
 
-    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const title = document.getElementById('title').value;
-      const file = document.getElementById('imageFile').files[0];
-      const filePath = `${Date.now()}_${file.name}`;
-
-      try {
-        // Upload to Supabase storage
-        const { error: uploadError } = await supabase.storage
-          .from('uploads')
-          .upload(filePath, file);
-
-        if (uploadError) throw uploadError;
-
-        // Get public URL
-        const { data: urlData } = supabase.storage
-          .from('uploads')
-          .getPublicUrl(filePath);
-
-        const imageUrl = urlData.publicUrl;
-
-        // Insert into posts table
-        const { error: insertError } = await supabase
-          .from('posts')
-          .insert([
-            { title, image_url: imageUrl, created_at: new Date().toISOString() }
-          ]);
-
-        if (insertError) throw insertError;
-
-        document.getElementById('uploadForm').reset();
-        alert('✅ Uploaded successfully!');
-        fetchPosts();
-
-      } catch (err) {
-        alert('❌ Error: ' + err.message);
-        console.error(err);
-      }
+    data.forEach(post => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = `
+        <strong>${post.title}</strong><br>
+        <img src="${post.image_url}" alt="${post.title}" width="200" />
+      `;
+      postsDiv.appendChild(div);
     });
+  }
 
-    // Optional: Use polling instead of realtime if needed
-    setInterval(fetchPosts, 3000); // Fetch every 3 seconds
+  document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-    fetchPosts();
-  </script>
+    const title = document.getElementById('title').value;
+    const file = document.getElementById('imageFile').files[0];
+
+    if (!file || !title) {
+      alert('Please provide both title and image.');
+      return;
+    }
+
+    const filePath = `${Date.now()}_${file.name}`;
+
+    try {
+      // Upload to Supabase storage
+      const { error: uploadError } = await supabase.storage
+        .from('uploads')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: urlData, error: urlError } = supabase.storage
+        .from('uploads')
+        .getPublicUrl(filePath);
+
+      if (urlError || !urlData?.publicUrl) {
+        throw urlError || new Error("Failed to get public URL");
+      }
+
+      const imageUrl = urlData.publicUrl;
+      console.log("Image URL:", imageUrl); // For debugging
+
+      // Insert into posts table
+      const { error: insertError } = await supabase
+        .from('posts')
+        .insert([
+          { title, image_url: imageUrl, created_at: new Date().toISOString() }
+        ]);
+
+      if (insertError) throw insertError;
+
+      document.getElementById('uploadForm').reset();
+      alert('✅ Uploaded successfully!');
+      fetchPosts();
+
+    } catch (err) {
+      alert('❌ Error: ' + err.message);
+      console.error(err);
+    }
+  });
+
+  // Fetch posts every 3 seconds
+  setInterval(fetchPosts, 3000);
+
+  // Initial fetch
+  fetchPosts();
+</script>
+
 </body>
 </html>
