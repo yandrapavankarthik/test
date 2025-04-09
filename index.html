@@ -23,12 +23,13 @@
   <div id="posts"></div>
 
   <script>
+    // Initialize Supabase client
     const supabase = supabase.createClient(
       'https://gmbcsysnhrcnmubvbzgw.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtYmNzeXNuaHJjbm11YnZiemd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxMjU5MTksImV4cCI6MjA1OTcwMTkxOX0.didadgJPtCgHLo0kzorpAX6bZztVEOcQ0c1_VvhYR5E'
     );
 
-    // Fetch existing posts from Supabase
+    // Function to fetch posts from the database
     async function fetchPosts() {
       const { data, error } = await supabase
         .from('posts')
@@ -36,11 +37,12 @@
         .order('created_at', { ascending: false });
 
       const postsDiv = document.getElementById('posts');
-      postsDiv.innerHTML = '';  // Clear the posts div before appending new data
+      postsDiv.innerHTML = ''; // Clear existing posts
       if (error) {
-        console.error("Error fetching posts:", error);
+        console.error('Error fetching posts:', error);
       }
-      
+
+      // Display each post
       data.forEach(post => {
         const div = document.createElement('div');
         div.className = 'card';
@@ -49,6 +51,7 @@
       });
     }
 
+    // Event listener for form submission
     document.getElementById('uploadForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -60,6 +63,9 @@
         alert("Please select an image to upload.");
         return;
       }
+
+      // Generate a unique ID (for example, using UUID generation)
+      const postId = crypto.randomUUID();  // Generate a random UUID for the 'id'
 
       // Generate unique file path based on timestamp and file name
       const filePath = `${Date.now()}_${file.name}`;
@@ -84,9 +90,9 @@
 
         const imageUrl = urlData.publicUrl;
 
-        // Insert the new post into the 'posts' table
+        // Insert the post data (with the generated postId, title, and image_url) into the 'posts' table
         const { error: insertError } = await supabase.from('posts').insert([
-          { title, image_url: imageUrl }
+          { id: postId, title, image_url: imageUrl }  // Insert the manually generated id (UUID)
         ]);
 
         if (insertError) {
@@ -96,7 +102,7 @@
         // Clear the input fields after successful upload
         fileInput.value = '';
         document.getElementById('title').value = '';
-        
+
         // Optionally, fetch posts again after the successful insert
         fetchPosts();
       } catch (error) {
@@ -104,13 +110,13 @@
       }
     });
 
-    // Real-time listener to detect changes in the 'posts' table
+    // Real-time listener for new posts
     supabase
       .channel('public:posts')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, fetchPosts)
       .subscribe();
 
-    // Initial fetch of posts on page load
+    // Fetch posts when the page loads
     fetchPosts();
   </script>
 </body>
