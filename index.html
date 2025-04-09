@@ -25,8 +25,8 @@
   <script>
     // Initialize Supabase client
     const supabase = supabase.createClient(
-      'https://gmbcsysnhrcnmubvbzgw.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtYmNzeXNuaHJjbm11YnZiemd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxMjU5MTksImV4cCI6MjA1OTcwMTkxOX0.didadgJPtCgHLo0kzorpAX6bZztVEOcQ0c1_VvhYR5E'
+      'https://gmbcsysnhrcnmubvbzgw.supabase.co',  // Your Supabase URL
+      'your_supabase_public_anon_key'            // Your Supabase API key
     );
 
     // Function to fetch posts from the database
@@ -38,6 +38,7 @@
 
       const postsDiv = document.getElementById('posts');
       postsDiv.innerHTML = ''; // Clear existing posts
+
       if (error) {
         console.error('Error fetching posts:', error);
       }
@@ -46,7 +47,10 @@
       data.forEach(post => {
         const div = document.createElement('div');
         div.className = 'card';
-        div.innerHTML = `<strong>${post.title}</strong><br><img src="${post.image_url}" />`;
+        div.innerHTML = `
+          <strong>${post.title}</strong><br>
+          <img src="${post.image_url}" alt="${post.title}" />
+        `;
         postsDiv.appendChild(div);
       });
     }
@@ -64,10 +68,6 @@
         return;
       }
 
-      // Generate a unique ID (for example, using UUID generation)
-      const postId = crypto.randomUUID();  // Generate a random UUID for the 'id'
-
-      // Generate unique file path based on timestamp and file name
       const filePath = `${Date.now()}_${file.name}`;
       try {
         // Upload the image file to Supabase storage
@@ -79,7 +79,7 @@
           throw new Error('Image upload failed: ' + uploadError.message);
         }
 
-        // Generate public URL for the uploaded image
+        // Get the public URL of the uploaded image
         const { data: urlData, error: urlError } = supabase.storage
           .from('uploads')
           .getPublicUrl(filePath);
@@ -90,9 +90,9 @@
 
         const imageUrl = urlData.publicUrl;
 
-        // Insert the post data (with the generated postId, title, and image_url) into the 'posts' table
+        // Insert the post data (with title and image_url) into the 'posts' table
         const { error: insertError } = await supabase.from('posts').insert([
-          { id: postId, title, image_url: imageUrl }  // Insert the manually generated id (UUID)
+          { title, image_url: imageUrl }
         ]);
 
         if (insertError) {
@@ -103,7 +103,7 @@
         fileInput.value = '';
         document.getElementById('title').value = '';
 
-        // Optionally, fetch posts again after the successful insert
+        // Fetch posts again after insert
         fetchPosts();
       } catch (error) {
         alert(error.message);
