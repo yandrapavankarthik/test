@@ -22,10 +22,10 @@
   <div id="posts"></div>
 
   <script>
-    const supabase = supabase.createClient(
-      'https://gmbcsysnhrcnmubvbzgw.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtYmNzeXNuaHJjbm11YnZiemd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxMjU5MTksImV4cCI6MjA1OTcwMTkxOX0.didadgJPtCgHLo0kzorpAX6bZztVEOcQ0c1_VvhYR5E'
-    );
+    const supabaseUrl = 'https://gmbcsysnhrcnmubvbzgw.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtYmNzeXNuaHJjbm11YnZiemd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxMjU5MTksImV4cCI6MjA1OTcwMTkxOX0.didadgJPtCgHLo0kzorpAX6bZztVEOcQ0c1_VvhYR5E';
+
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     async function fetchPosts() {
       const { data, error } = await supabase
@@ -58,28 +58,33 @@
       const filePath = `${Date.now()}_${file.name}`;
 
       try {
-        // Upload to storage
+        // Upload to Supabase Storage
         const { error: uploadError } = await supabase.storage
           .from('uploads')
           .upload(filePath, file);
 
         if (uploadError) throw uploadError;
 
-        // Get public URL
-        const { data: urlData } = supabase.storage
+        // Get public image URL
+        const { data: urlData, error: urlError } = supabase
+          .storage
           .from('uploads')
           .getPublicUrl(filePath);
+
+        if (urlError) throw urlError;
 
         const imageUrl = urlData.publicUrl;
 
         // Insert into posts table
         const { error: insertError } = await supabase
           .from('posts')
-          .insert([{
-            title,
-            image_url: imageUrl,
-            created_at: new Date().toISOString()
-          }]);
+          .insert([
+            {
+              title,
+              image_url: imageUrl,
+              created_at: new Date().toISOString()
+            }
+          ]);
 
         if (insertError) throw insertError;
 
@@ -88,12 +93,12 @@
         fetchPosts();
 
       } catch (err) {
-        alert('❌ Error: ' + err.message);
+        alert('❌ Error uploading: ' + err.message);
         console.error(err);
       }
     });
 
-    // Real-time subscription
+    // Realtime sync
     supabase
       .channel('realtime:posts')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, fetchPosts)
