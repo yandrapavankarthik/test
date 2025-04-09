@@ -73,21 +73,22 @@
         const imageUrl = urlData.publicUrl;
 
         // Insert into posts table
-       const { error: insertError } = await supabase
-  .from('posts')
-  .insert([{
-    title,
-    image_url: imageUrl,
-    created_at: new Date().toISOString()  // ✅ add this line
-  }]);
+        const { error: insertError } = await supabase
+          .from('posts')
+          .insert([{
+            title,
+            image_url: imageUrl,
+            created_at: new Date().toISOString()
+          }]);
 
         if (insertError) throw insertError;
 
         document.getElementById('uploadForm').reset();
+        alert('✅ Uploaded successfully!');
         fetchPosts();
 
       } catch (err) {
-        alert('Error: ' + err.message);
+        alert('❌ Error: ' + err.message);
         console.error(err);
       }
     });
