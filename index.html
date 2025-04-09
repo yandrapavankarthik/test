@@ -74,16 +74,16 @@
       if (uploadError) throw uploadError;
 
       // Get public URL
-      const { data: urlData, error: urlError } = supabase.storage
+      const { publicURL, error: urlError } = supabase.storage
         .from('uploads')
         .getPublicUrl(filePath);
 
-      if (urlError || !urlData?.publicUrl) {
+      if (urlError || !publicURL) {
         throw urlError || new Error("Failed to get public URL");
       }
 
-      const imageUrl = urlData.publicUrl;
-      console.log("Image URL:", imageUrl); // For debugging
+      const imageUrl = publicURL;
+      console.log("Image URL:", imageUrl); // Debugging
 
       // Insert into posts table
       const { error: insertError } = await supabase
