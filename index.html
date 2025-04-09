@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Real-Time Uploads</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.min.js"></script>
   <style>
     body { font-family: sans-serif; padding: 20px; }
     img { max-width: 200px; display: block; margin-top: 10px; }
@@ -25,7 +25,7 @@
     const supabaseUrl = 'https://gmbcsysnhrcnmubvbzgw.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtYmNzeXNuaHJjbm11YnZiemd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxMjU5MTksImV4cCI6MjA1OTcwMTkxOX0.didadgJPtCgHLo0kzorpAX6bZztVEOcQ0c1_VvhYR5E';
 
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     async function fetchPosts() {
       const { data, error } = await supabase
@@ -58,20 +58,17 @@
       const filePath = `${Date.now()}_${file.name}`;
 
       try {
-        // Upload to Supabase Storage
+        // Upload to Supabase storage
         const { error: uploadError } = await supabase.storage
           .from('uploads')
           .upload(filePath, file);
 
         if (uploadError) throw uploadError;
 
-        // Get public image URL
-        const { data: urlData, error: urlError } = supabase
-          .storage
+        // Get public URL
+        const { data: urlData } = supabase.storage
           .from('uploads')
           .getPublicUrl(filePath);
-
-        if (urlError) throw urlError;
 
         const imageUrl = urlData.publicUrl;
 
@@ -79,11 +76,7 @@
         const { error: insertError } = await supabase
           .from('posts')
           .insert([
-            {
-              title,
-              image_url: imageUrl,
-              created_at: new Date().toISOString()
-            }
+            { title, image_url: imageUrl, created_at: new Date().toISOString() }
           ]);
 
         if (insertError) throw insertError;
@@ -93,16 +86,13 @@
         fetchPosts();
 
       } catch (err) {
-        alert('❌ Error uploading: ' + err.message);
+        alert('❌ Error: ' + err.message);
         console.error(err);
       }
     });
 
-    // Realtime sync
-    supabase
-      .channel('realtime:posts')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, fetchPosts)
-      .subscribe();
+    // Optional: Use polling instead of realtime if needed
+    setInterval(fetchPosts, 3000); // Fetch every 3 seconds
 
     fetchPosts();
   </script>
