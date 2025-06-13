@@ -43,24 +43,30 @@ h1 {
   border: 1px solid #ccc;
 }
 
-/* 👉 Default (desktop): 4 products per row */
+/* 👉 Desktop View: 4 products per row */
 #products {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
-/* ✅ Tablet/Mobile View: 2 products per row */
+/* ✅ Mobile/Tablet: 2 products per row */
 @media (max-width: 768px) {
   body {
-    padding-left: 1cm;
-    padding-right: 1cm;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding: 20px 1cm;
   }
-
   #products {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ✅ Extra Small Devices (phones) */
+@media (max-width: 480px) {
+  #products {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  h1 {
+    font-size: 28px;
   }
 }
 
@@ -77,9 +83,10 @@ h1 {
   transform: scale(1.02);
 }
 
+/* ✅ Product Image - Maintain 4:5 Aspect Ratio */
 .product img {
   width: 100%;
-  height: 180px;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
 }
 
@@ -99,7 +106,7 @@ h1 {
   color: #444;
 }
 
-/* ✅ Modal (Desktop): limit height */
+/* ✅ Modal Setup */
 .modal {
   display: none;
   position: fixed;
@@ -114,29 +121,42 @@ h1 {
 .modal-content {
   background: white;
   padding: 20px;
-  max-width: 500px;
   width: 90%;
+  max-width: 500px;
   border-radius: 8px;
   position: relative;
-  max-height: 90vh; /* 👈 Limit modal height */
+  max-height: 90vh;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* 👇 Modal image: adjust size for mobile */
+/* ✅ Modal Image - Maintain 4:5 Ratio */
 .modal img {
   width: 100%;
-  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
 }
 
 @media (max-width: 768px) {
   .modal-content {
-    max-width: 90%;
+    max-width: 95%;
     padding: 16px;
   }
 
   .modal img {
-    height: auto;
-    max-height: 300px; /* 👈 Make image slightly bigger in mobile */
+    max-height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    max-width: 95%;
+  }
+
+  .modal img {
+    max-height: 350px;
   }
 }
 
