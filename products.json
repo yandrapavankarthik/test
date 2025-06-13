@@ -2,12 +2,30 @@
   {
     "name": "Red T-Shirt",
     "category": "T-Shirt",
-    "image": "https://www.tatacliq.com/levis-navy-slim-fit-shirt/p-mp000000022406738",
+    "image": "imagesblue-hoodie.jpeg",
     "price": "$50",
     "description": "Comfortable red cotton t-shirt.",
     "size": "M, L, XL",
     "buyLink": "https://example.com/buy/red-tshirt"
   },
+  {
+    "name": "Blue Hoodie",
+    "category": "T-Shirt",
+    "image": "imagesblue-hoodie.jpeg",
+    "price": "$25",
+    "description": "Warm and stylish blue hoodie.",
+    "size": "M, L",
+    "buyLink": "https://example.com/buy/blue-hoodie"
+  }
+  {
+    "name": "Blue Hoodie",
+    "category": "T-Shirt",
+    "image": "imagesblue-hoodie.jpeg",
+    "price": "$25",
+    "description": "Warm and stylish blue hoodie.",
+    "size": "M, L",
+    "buyLink": "https://example.com/buy/blue-hoodie"
+  }
   {
     "name": "Blue Hoodie",
     "category": "T-Shirt",
