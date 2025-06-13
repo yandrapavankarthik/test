@@ -2,7 +2,7 @@
   {
     "name": "Red T-Shirt",
     "category": "T-Shirt",
-    "image": "images/red-tshirt.jpeg",
+    "image": "https://raw.githubusercontent.com/yandrapavankarthik/test/refs/heads/main/home%20page.png",
     "price": "$50",
     "description": "Comfortable red cotton t-shirt.",
     "size": "M, L, XL",
@@ -11,7 +11,7 @@
   {
     "name": "Black Action Parkview Lifestyle Shoes",
     "category": "Shoes",
-    "image": "images/black-shoes.jpeg",
+    "image": "https://raw.githubusercontent.com/yandrapavankarthik/test/refs/heads/main/home%20page.png",
     "price": "₹6,999",
     "description": "Hush Puppies lifestyle sneakers in black.",
     "size": "7, 8, 9, 10",
@@ -20,7 +20,7 @@
   {
     "name": "Black MAMGP T7 Sweat Sporty Jacket",
     "category": "Jackets",
-    "image": "images/black-jacket.jpeg",
+    "image": "https://raw.githubusercontent.com/yandrapavankarthik/test/refs/heads/main/home%20page.png",
     "price": "₹7,999",
     "description": "Puma sporty jacket with sweat-resistant fabric.",
     "size": "M, L, XL",
@@ -29,7 +29,7 @@
   {
     "name": "Black Solid Lightweight Leather Jacket",
     "category": "Jackets",
-    "image": "images/leather-jacket.jpeg",
+    "image": "https://raw.githubusercontent.com/yandrapavankarthik/test/refs/heads/main/home%20page.png",
     "price": "₹9,999",
     "description": "Premium lightweight leather jacket by BARESKIN.",
     "size": "L, XL, XXL",
@@ -38,7 +38,7 @@
   {
     "name": "Blue Solid Shirt Dress",
     "category": "Dress",
-    "image": "images/blue-dress.jpeg",
+    "image": "https://raw.githubusercontent.com/yandrapavankarthik/test/refs/heads/main/home%20page.png",
     "price": "₹5,200",
     "description": "Trendy shirt dress in solid blue by SASAFRAS.",
     "size": "S, M, L",
