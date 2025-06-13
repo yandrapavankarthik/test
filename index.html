@@ -2,34 +2,79 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Store</title>
+  <title>My E-Commerce</title>
   <style>
-    body { font-family: sans-serif; }
-    .product { border: 1px solid #ccc; padding: 10px; margin: 10px; width: 200px; display: inline-block; vertical-align: top; }
-    .product img { width: 100%; height: auto; }
+    body { font-family: sans-serif; margin: 0; padding: 20px; }
+    .product { display: inline-block; width: 200px; margin: 10px; border: 1px solid #ccc; padding: 10px; cursor: pointer; }
+    .product img { width: 100%; }
+
+    /* Modal styles */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6);
+      justify-content: center; align-items: center;
+    }
+    .modal-content {
+      background: white; padding: 20px; max-width: 500px; width: 90%; border-radius: 5px;
+    }
+    .modal img { width: 100%; }
+    .close { float: right; cursor: pointer; font-size: 20px; }
+    .buy-btn {
+      background: #28a745; color: white; padding: 10px 20px;
+      text-decoration: none; display: inline-block; margin-top: 10px;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
-  <h1>My Products</h1>
-  <div id="products"></div>
 
-  <script>
-    fetch('products.json')
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById('products');
-        data.forEach(product => {
-          const div = document.createElement('div');
-          div.className = 'product';
-          div.innerHTML = `
-            <img src="${product.image}" alt="${product.name}">
-            <h2>${product.name}</h2>
-            <p>${product.description}</p>
-            <strong>${product.price}</strong>
-          `;
-          container.appendChild(div);
-        });
+<h1>My Products</h1>
+<div id="products"></div>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="document.getElementById('modal').style.display='none'">&times;</span>
+    <img id="modal-img">
+    <h2 id="modal-title"></h2>
+    <p id="modal-description"></p>
+    <p><strong>Price:</strong> <span id="modal-price"></span></p>
+    <p><strong>Size:</strong> <span id="modal-size"></span></p>
+    <a id="modal-buy" class="buy-btn" target="_blank">Buy Now</a>
+  </div>
+</div>
+
+<script>
+  fetch('products.json')
+    .then(res => res.json())
+    .then(products => {
+      const container = document.getElementById('products');
+      products.forEach((product, index) => {
+        const div = document.createElement('div');
+        div.className = 'product';
+        div.innerHTML = `<img src="${product.image}" alt="${product.name}"><h3>${product.name}</h3><p>${product.price}</p>`;
+        div.onclick = () => showModal(product);
+        container.appendChild(div);
       });
-  </script>
+    });
+
+  function showModal(product) {
+    document.getElementById('modal-img').src = product.image;
+    document.getElementById('modal-title').textContent = product.name;
+    document.getElementById('modal-description').textContent = product.description;
+    document.getElementById('modal-price').textContent = product.price;
+    document.getElementById('modal-size').textContent = product.size;
+    document.getElementById('modal-buy').href = product.buyLink;
+    document.getElementById('modal').style.display = 'flex';
+  }
+
+  // Close modal if clicked outside
+  window.onclick = e => {
+    if (e.target.id === 'modal') {
+      document.getElementById('modal').style.display = 'none';
+    }
+  };
+</script>
+
 </body>
 </html>
