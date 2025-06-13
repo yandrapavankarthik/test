@@ -21,6 +21,14 @@ h1 {
   color: #1f2937;
 }
 
+/* 👇 Mobile h1 font size increased */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 26px;
+    text-align: center;
+  }
+}
+
 .controls {
   display: flex;
   justify-content: flex-end;
@@ -35,30 +43,27 @@ h1 {
   border: 1px solid #ccc;
 }
 
+/* 👉 Default (desktop): 4 products per row */
 #products {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
-/* 👇 Mobile layout fix */
+/* ✅ Tablet/Mobile View: 2 products per row */
 @media (max-width: 768px) {
   body {
-    padding-left: 0.1cm;
-    padding-right: 0.1cm;
+    padding-left: 1cm;
+    padding-right: 1cm;
     padding-top: 20px;
     padding-bottom: 20px;
-    background-color: #f3f6fb;
-  margin: 0;
   }
 
   #products {
-    grid-template-columns: repeat(2, 1fr); /* ← Only 2 item per row */
+    grid-template-columns: repeat(2, 1fr);
   }
 }
-h1 {
-  font-size: 18px;
-}
+
 .product {
   background-color: #fff;
   border-radius: 12px;
@@ -94,6 +99,7 @@ h1 {
   color: #444;
 }
 
+/* ✅ Modal (Desktop): limit height */
 .modal {
   display: none;
   position: fixed;
@@ -112,11 +118,26 @@ h1 {
   width: 90%;
   border-radius: 8px;
   position: relative;
+  max-height: 90vh; /* 👈 Limit modal height */
+  overflow-y: auto;
 }
 
+/* 👇 Modal image: adjust size for mobile */
 .modal img {
   width: 100%;
-  height: 100%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 90%;
+    padding: 16px;
+  }
+
+  .modal img {
+    height: auto;
+    max-height: 300px; /* 👈 Make image slightly bigger in mobile */
+  }
 }
 
 .close {
