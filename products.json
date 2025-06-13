@@ -1,18 +1,20 @@
 [
   {
     "name": "Red T-Shirt",
+    "category": "T-Shirt",
     "image": "images/red-tshirt.jpg",
-    "price": "$10",
+    "price": 10,
     "description": "Comfortable red cotton t-shirt.",
     "size": "M, L, XL",
     "buyLink": "https://example.com/buy/red-tshirt"
   },
   {
-    "name": "Blue Hoodie",
-    "image": "images/blue-hoodie.jpg",
-    "price": "$25",
-    "description": "Warm and stylish blue hoodie.",
+    "name": "Formal Shirt",
+    "category": "Shirt",
+    "image": "images/formal-shirt.jpg",
+    "price": 20,
+    "description": "Elegant formal shirt for office wear.",
     "size": "M, L",
-    "buyLink": "https://example.com/buy/blue-hoodie"
+    "buyLink": "https://example.com/buy/formal-shirt"
   }
 ]
