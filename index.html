@@ -37,11 +37,13 @@
     <option value="T-Shirt">T-Shirt</option>
   </select>
 
-  <label for="sortOrder">Sort by Price:</label>
+  <label for="sortOrder">Sort by:</label>
   <select id="sortOrder">
     <option value="default">Default</option>
-    <option value="low">Low to High</option>
-    <option value="high">High to Low</option>
+    <option value="price-low">Price: Low to High</option>
+    <option value="price-high">Price: High to Low</option>
+    <option value="name-asc">Name: A–Z</option>
+    <option value="name-desc">Name: Z–A</option>
   </select>
 </div>
 
@@ -67,16 +69,23 @@
     .then(res => res.json())
     .then(products => {
       allProducts = products;
-      renderProducts(products);
+      updateDisplay();
     });
 
   function renderProducts(products) {
     const container = document.getElementById('products');
     container.innerHTML = '';
+    if (products.length === 0) {
+      container.innerHTML = '<p>No products found.</p>';
+      return;
+    }
     products.forEach(product => {
       const div = document.createElement('div');
       div.className = 'product';
-      div.innerHTML = `<img src="${product.image}" alt="${product.name}"><h3>${product.name}</h3><p>$${product.price}</p>`;
+      div.innerHTML = `
+        <img src="${product.image}" alt="${product.name}">
+        <h3>${product.name}</h3>
+        <p>$${product.price}</p>`;
       div.onclick = () => showModal(product);
       container.appendChild(div);
     });
@@ -101,13 +110,17 @@
     const sortOrder = document.getElementById('sortOrder').value;
 
     if (category !== 'All') {
-      filtered = filtered.filter(p => p.category === category);
+      filtered = filtered.filter(p => p.category.toLowerCase() === category.toLowerCase());
     }
 
-    if (sortOrder === 'low') {
+    if (sortOrder === 'price-low') {
       filtered.sort((a, b) => a.price - b.price);
-    } else if (sortOrder === 'high') {
+    } else if (sortOrder === 'price-high') {
       filtered.sort((a, b) => b.price - a.price);
+    } else if (sortOrder === 'name-asc') {
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortOrder === 'name-desc') {
+      filtered.sort((a, b) => b.name.localeCompare(a.name));
     }
 
     renderProducts(filtered);
@@ -119,6 +132,7 @@
     }
   };
 </script>
+
 
 </body>
 </html>
