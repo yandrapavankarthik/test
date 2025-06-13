@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Red T-Shirt",
+    "image": "images/red-tshirt.jpg",
+    "price": "$10",
+    "description": "Comfortable red cotton t-shirt."
+  },
+  {
+    "name": "Blue Hoodie",
+    "image": "images/blue-hoodie.jpg",
+    "price": "$25",
+    "description": "Warm and stylish blue hoodie."
+  }
+]
