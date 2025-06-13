@@ -2,7 +2,7 @@
   {
     "name": "Red T-Shirt",
     "category": "T-Shirt",
-    "image": "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcT8LoykKnjnk-KLJWvK75JYO5v_uH7kOS3uUfTlCjsleCFx_eQG2I02iQeCOH1Jkgs484XhBorLVJhGXWyhe0Tug7j3P7ujyAA6UZpMwLr06WCZiAf8LB5B",
+    "image": "images/red-tshirt.jpg",
     "price": 10,
     "description": "Comfortable red cotton t-shirt.",
     "size": "M, L, XL",
@@ -11,7 +11,7 @@
   {
     "name": "Formal Shirt",
     "category": "Shirt",
-    "image": "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcT8LoykKnjnk-KLJWvK75JYO5v_uH7kOS3uUfTlCjsleCFx_eQG2I02iQeCOH1Jkgs484XhBorLVJhGXWyhe0Tug7j3P7ujyAA6UZpMwLr06WCZiAf8LB5B",
+    "image": "images/formal-shirt.jpg",
     "price": 20,
     "description": "Elegant formal shirt for office wear.",
     "size": "M, L",
