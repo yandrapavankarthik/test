@@ -2,114 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Real-Time Uploads</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.min.js"></script>
+  <title>My Store</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    img { max-width: 200px; display: block; margin-top: 10px; }
-    .card { border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 8px; }
+    body { font-family: sans-serif; }
+    .product { border: 1px solid #ccc; padding: 10px; margin: 10px; width: 200px; display: inline-block; vertical-align: top; }
+    .product img { width: 100%; height: auto; }
   </style>
 </head>
 <body>
-  <h1>Upload Image + Text</h1>
-  <form id="uploadForm">
-    <input type="text" id="title" placeholder="Enter title" required><br><br>
-    <input type="file" id="imageFile" accept="image/*" required><br><br>
-    <button type="submit">Upload</button>
-  </form>
+  <h1>My Products</h1>
+  <div id="products"></div>
 
-  <h2>Live Posts</h2>
-  <div id="posts"></div>
-
-<script>
-  const supabaseUrl = 'https://gmbcsysnhrcnmubvbzgw.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtYmNzeXNuaHJjbm11YnZiemd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxMjU5MTksImV4cCI6MjA1OTcwMTkxOX0.didadgJPtCgHLo0kzorpAX6bZztVEOcQ0c1_VvhYR5E';
-
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-  async function fetchPosts() {
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    const postsDiv = document.getElementById('posts');
-    postsDiv.innerHTML = '';
-
-    if (error) {
-      console.error('Error fetching posts:', error);
-      return;
-    }
-
-    data.forEach(post => {
-      const div = document.createElement('div');
-      div.className = 'card';
-      div.innerHTML = `
-        <strong>${post.title}</strong><br>
-        <img src="${post.image_url}" alt="${post.title}" width="200" />
-      `;
-      postsDiv.appendChild(div);
-    });
-  }
-
-  document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const title = document.getElementById('title').value;
-    const file = document.getElementById('imageFile').files[0];
-
-    if (!file || !title) {
-      alert('Please provide both title and image.');
-      return;
-    }
-
-    const filePath = `${Date.now()}_${file.name}`;
-
-    try {
-      // Upload to Supabase storage
-      const { error: uploadError } = await supabase.storage
-        .from('uploads')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      // Get public URL
-      const { publicURL, error: urlError } = supabase.storage
-        .from('uploads')
-        .getPublicUrl(filePath);
-
-      if (urlError || !publicURL) {
-        throw urlError || new Error("Failed to get public URL");
-      }
-
-      const imageUrl = publicURL;
-      console.log("Image URL:", imageUrl); // Debugging
-
-      // Insert into posts table
-      const { error: insertError } = await supabase
-        .from('posts')
-        .insert([
-          { title, image_url: imageUrl, created_at: new Date().toISOString() }
-        ]);
-
-      if (insertError) throw insertError;
-
-      document.getElementById('uploadForm').reset();
-      alert('✅ Uploaded successfully!');
-      fetchPosts();
-
-    } catch (err) {
-      alert('❌ Error: ' + err.message);
-      console.error(err);
-    }
-  });
-
-  // Fetch posts every 3 seconds
-  setInterval(fetchPosts, 3000);
-
-  // Initial fetch
-  fetchPosts();
-</script>
-
+  <script>
+    fetch('products.json')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('products');
+        data.forEach(product => {
+          const div = document.createElement('div');
+          div.className = 'product';
+          div.innerHTML = `
+            <img src="${product.image}" alt="${product.name}">
+            <h2>${product.name}</h2>
+            <p>${product.description}</p>
+            <strong>${product.price}</strong>
+          `;
+          container.appendChild(div);
+        });
+      });
+  </script>
 </body>
 </html>
