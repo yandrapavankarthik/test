@@ -2,37 +2,46 @@
   {
     "name": "Red T-Shirt",
     "category": "T-Shirt",
-    "image": "imagesblue-hoodie.jpeg",
+    "image": "images/red-tshirt.jpeg",
     "price": "$50",
     "description": "Comfortable red cotton t-shirt.",
     "size": "M, L, XL",
     "buyLink": "https://example.com/buy/red-tshirt"
   },
   {
-    "name": "Blue Hoodie",
-    "category": "T-Shirt",
-    "image": "imagesblue-hoodie.jpeg",
-    "price": "$25",
-    "description": "Warm and stylish blue hoodie.",
-    "size": "M, L",
-    "buyLink": "https://example.com/buy/blue-hoodie"
-  }
+    "name": "Black Action Parkview Lifestyle Shoes",
+    "category": "Shoes",
+    "image": "images/black-shoes.jpeg",
+    "price": "₹6,999",
+    "description": "Hush Puppies lifestyle sneakers in black.",
+    "size": "7, 8, 9, 10",
+    "buyLink": "https://example.com/buy/black-shoes"
+  },
   {
-    "name": "Blue Hoodie",
-    "category": "T-Shirt",
-    "image": "imagesblue-hoodie.jpeg",
-    "price": "$25",
-    "description": "Warm and stylish blue hoodie.",
-    "size": "M, L",
-    "buyLink": "https://example.com/buy/blue-hoodie"
-  }
+    "name": "Black MAMGP T7 Sweat Sporty Jacket",
+    "category": "Jackets",
+    "image": "images/black-jacket.jpeg",
+    "price": "₹7,999",
+    "description": "Puma sporty jacket with sweat-resistant fabric.",
+    "size": "M, L, XL",
+    "buyLink": "https://example.com/buy/puma-jacket"
+  },
   {
-    "name": "Blue Hoodie",
-    "category": "T-Shirt",
-    "image": "imagesblue-hoodie.jpeg",
-    "price": "$25",
-    "description": "Warm and stylish blue hoodie.",
-    "size": "M, L",
-    "buyLink": "https://example.com/buy/blue-hoodie"
+    "name": "Black Solid Lightweight Leather Jacket",
+    "category": "Jackets",
+    "image": "images/leather-jacket.jpeg",
+    "price": "₹9,999",
+    "description": "Premium lightweight leather jacket by BARESKIN.",
+    "size": "L, XL, XXL",
+    "buyLink": "https://example.com/buy/leather-jacket"
+  },
+  {
+    "name": "Blue Solid Shirt Dress",
+    "category": "Dress",
+    "image": "images/blue-dress.jpeg",
+    "price": "₹5,200",
+    "description": "Trendy shirt dress in solid blue by SASAFRAS.",
+    "size": "S, M, L",
+    "buyLink": "https://example.com/buy/blue-dress"
   }
 ]
